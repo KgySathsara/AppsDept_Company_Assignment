@@ -45,6 +45,7 @@ class StudentController extends Controller
             'email'=> $validateData['email'],
             'password'=> $validateData['password']
         ]);
+        //dd($user);
 
         $user->student()->create([
             'name' => $validateData['name'],

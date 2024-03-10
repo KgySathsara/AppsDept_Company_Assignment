@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class student extends Model
 {
@@ -16,7 +16,6 @@ class student extends Model
         'email',
         'address',
         'phone',
-        'faculty',
         'user_id'
     ];
 
@@ -25,8 +24,11 @@ class student extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function course(): HasOne
+    /**
+     * Implement HasMany relationship in enrollment model
+     */
+    public function enrollment(): HasMany
     {
-        return $this->hasOne(course::class);
+        return $this->hasMany(enrollment::class);
     }
 }
