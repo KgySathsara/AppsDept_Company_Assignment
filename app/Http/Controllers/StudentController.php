@@ -47,7 +47,7 @@ class StudentController extends Controller
         ]);
         //dd($user);
 
-        $user->student()->create([
+        $student = $user->student()->create([
             'name' => $validateData['name'],
             'email' => $validateData['email'],
             'address' => $validateData['address'],
@@ -55,14 +55,9 @@ class StudentController extends Controller
             'user_id' => $user->id
         ]);
 
-        if (!$user) return response()->json(
-            ["message" => "Failed to create student"],
-            500
-        );
-        return response()->json([
-            ["message" => "Student created succesfull"],
-            200
-        ]);
+        if (!$student) return response()->json(["Failed to create student"],500);
+
+        return response()->json([["Student created succesfull"],200]);
 
     }
 
@@ -87,16 +82,57 @@ class StudentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, student $student)
+    public function update(Request $request, $id)
     {
-        //
+        $validateData = $request->validate([
+            'name' => ['required'],
+            'email' => ['required','unique:students'],
+            'address' => ['required'],
+            'phone' => ['required','digits:10','numeric'],
+            'id' => ['required'],
+        ]);
+
+        $user = User::find($id);
+
+        if(!$user){
+            return response() -> json(["User not found"]);
+        }
+
+        $user->update([
+            'name' => $validateData['name'],
+            'email' => $validateData['email'],
+        ]);
+
+        //find the student  relationship with user
+        $student = $user->student();
+
+        //update student date
+        $student->update([
+            'name' => $validateData['name'],
+            'email' => $validateData['email'],
+            'address' => $validateData['address'],
+            'phone' => $validateData['phone'],
+        ]);
+
+        if(!$student){
+            return response() -> json(["Student Update Error"]);
+        }else{
+            return response() -> json (["Student Update Success"]);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(student $student)
+    public function destroy($id)
     {
-        //
+        $student = student::find($id);
+
+        if(!$student)
+        {
+            return response()->json(['student not found']);
+        }
+        $student->delete();
+        return response()->json(['Student Deleted Successfully']);
     }
 }
